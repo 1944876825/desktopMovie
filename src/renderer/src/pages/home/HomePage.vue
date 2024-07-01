@@ -28,28 +28,31 @@
                     <div class="main-text-color" style="padding: 15px 0;font-weight: 600;font-size: 16px;">
                         {{ section.title }}
                     </div>
-                    <div>
-                        <el-row style="">
-                            <div v-for="item in section.items.slice(0, 6)" style="width: 16.6666%;">
-                                <router-link :to="'/play/'+item.vod_id" style="text-decoration: none;">
-                                    <div style="height: 80%;overflow: hidden;border-radius: 4px;">
-                                        <img 
-                                            class="mvImg"
-                                            style="width: 85%; border-radius: 4px;"
-                                            :src="item.vod_pic" alt="" srcset="">
-                                    </div>
-                                    <div style="height: 20%;overflow: hidden;">
-                                        <div class="mvName main-text-color" style="font-size: 14px; padding: 5px 0; font-weight: 600;">
-                                            {{ item.vod_name }}
-                                        </div>
-                                        <div class="mvRemarks main-text-color" style="font-size: 12px;">
-                                            {{ item.vod_remarks }}
-                                        </div>
-                                    </div>
-                                </router-link>
-                            </div>
-                        </el-row>
-                    </div>
+
+                    <el-row style="">
+                        <div v-for="item in section.items.slice(0, 6)" style="width: 16.6666%;">
+                            <router-link :to="'/play/'+item.vod_id" style="text-decoration: none;">
+                              <el-image class="mvImg" :src="item.vod_pic" lazy>
+                                    <template #placeholder>
+                                      <el-image src="/src/assets/images/load.gif" />
+                                    </template>
+                                    <template #error>
+                                      <div class="flex-col justify-center items-center" style="height: 100%;background-color:#4a4a4a;">
+                                        <el-icon size="48" color="#9f9f9f">
+                                          <icon-picture />
+                                        </el-icon>
+                                      </div>
+                                    </template>
+                                  </el-image>
+                              <div class="mvName main-text-color" style="font-size: 14px; padding: 5px 0; font-weight: 600;">
+                                {{ item.vod_name }}
+                              </div>
+                              <div class="mvRemarks main-text-color" style="font-size: 12px;">
+                                {{ item.vod_remarks }}
+                              </div>
+                            </router-link>
+                        </div>
+                    </el-row>
                 </div>
 
             </template>
@@ -61,6 +64,7 @@
 import { ref, watch } from 'vue'
 import { getHotApi } from '../../request/api/video'
 import { sections } from "../../request/model/video/hot"
+import { Picture as IconPicture } from '@element-plus/icons-vue'
 
 const props = defineProps({
     activeName: Number,
@@ -102,15 +106,18 @@ if (current_tab_index == 0) {
 
 <style scoped>
     .mvName:hover {
-        color: #FB7299 !important;
+      color: #FB7299 !important;
     }
     .mvImg {
-        transition: transform 0.2s ease-in-out;
+      width: 90%;
+      height: 220px;
+      border-radius: 4px;
+      transition: transform 0.2s ease-in-out;
     }
     .mvImg:hover {
-        transform: scale(1.05);
+      transform: scale(1.05);
     }
     .mvRemarks:hover {
-        color: #FB7299 !important;
+      color: #FB7299 !important;
     }
 </style>

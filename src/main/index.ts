@@ -9,6 +9,7 @@ function createWindow(): void {
     width: 1180,
     height: 680,
     show: false,
+    frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -31,10 +32,11 @@ function createWindow(): void {
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  handleWindow(mainWindow)
 }
 
 // This method will be called when Electron has finished
@@ -72,5 +74,17 @@ app.on('window-all-closed', () => {
   }
 })
 
+// 处理最大化、最小化、关闭窗口
+function handleWindow(mainWindow: BrowserWindow) {
+  ipcMain.on('handleWindow', (_, type) => {
+    if (type === 'min') {
+      mainWindow.minimize()
+    } else if (type === 'max') {
+      mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()
+    } else if (type == 'close') {
+      mainWindow.destroy()
+    }
+  })
+}
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

@@ -1,14 +1,8 @@
 // import {WindowFullscreen, WindowIsFullscreen, WindowMinimise, WindowUnfullscreen} from "../../wailsjs/runtime";
 // import {CloseWindows} from "../../wailsjs/go/main/App";
+// import { ipcRenderer } from 'electron'
 
-export const HandleWindow = (data: string) =>  {
-    if (data == 'min') {
-        // WindowMinimise()
-    } else if (data == 'max') {
-        // WindowFullscreen()
-    } else if (data == 'close') {
-        // CloseWindows().then()
-    } else if (data == 'unmax') {
-        // WindowUnfullscreen()
-    }
+export const HandleWindow = (data: string) => {
+  console.log(data)
+  // ipcRenderer.send('handleWindow', data)
 }

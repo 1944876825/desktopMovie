@@ -20,12 +20,12 @@
 }
 
 .drag {
-    /*-webkit-app-region: drag;*/
-    --wails-draggable:drag
+    -webkit-app-region: drag;
+    /*--wails-draggable:drag*/
 }
 .no-drag {
-    /*-webkit-app-region: no-drag;*/
-    --wails-draggable: no-drag
+    -webkit-app-region: no-drag;
+    /*--wails-draggable: no-drag*/
 }
 ::-webkit-scrollbar {
     width: 5px;

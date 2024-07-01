@@ -1,11 +1,11 @@
 import request from 'axios'
 
-const cmsApi = 'http://47.120.40.152:5003'
+const cmsApi = 'http://47.120.40.152:5003/addons/apptov3/app.php'
 
 // 首页热门视频
 export const getCateApi = () => {
   return request({
-    url: cmsApi + '/addons/apptov3/app.php/index/home_cate',
+    url: cmsApi + '/index/home_cate',
     method: 'get'
   })
 }
@@ -17,7 +17,7 @@ interface DetailParams {
 // 首页热门视频
 export const getVideoDetailApi = (params?: DetailParams) => {
   return request({
-    url: cmsApi + '/addons/appto/app.php/index/page_player',
+    url: cmsApi + '/index/page_player',
     method: 'get',
     params
   })
@@ -30,7 +30,7 @@ interface HotParams {
 // 首页热门视频
 export const getHotApi = (params?: HotParams) => {
   return request({
-    url: cmsApi + '/addons/appto/app.php/index/home_data',
+    url: cmsApi + '/index/home_data',
     method: 'get',
     params
   })
@@ -44,7 +44,7 @@ interface ParseParams {
 // 首页热门视频
 export const videoParseApi = (params?: ParseParams) => {
   return request({
-    url: cmsApi + '/addons/appto/app.php/index/page_parsing_config_v2',
+    url: cmsApi + '/index/page_parsing_config_v2',
     method: 'post',
     params
   })
@@ -53,7 +53,7 @@ export const videoParseApi = (params?: ParseParams) => {
 // 视频分类
 export const videoClassApi = (params: {}) => {
   return request({
-    url: cmsApi + '/addons/appto/app.php/index/page_vod_lists',
+    url: cmsApi + '/index/page_vod_lists',
     method: 'post',
     params
   })

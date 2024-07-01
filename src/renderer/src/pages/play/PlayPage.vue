@@ -163,14 +163,14 @@ const handFullWindow = async () => {
             </router-link>
 
             <el-row align="middle">
-                <div style="padding: 0 60px;-webkit-app-region:no-drag;">
+                <div style="padding: 0 10px;-webkit-app-region:no-drag;">
                     <el-input
                         class="searchinput w-50 m-2"
                         size="large"
                         placeholder="搜索你感兴趣的视频"
                     />
                 </div>
-                <el-row align="middle" style="-webkit-app-region:no-drag;">
+                <el-row align="middle" class="no-drag">
                     <div class="max_min" @click="HandleWindow('min')">
                         <el-icon :size="20" style="padding: 8px;"><SemiSelect /></el-icon>
                     </div>
