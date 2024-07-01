@@ -21,14 +21,15 @@
     "build:linux": "npm run build && electron-builder --linux"
   },
   "dependencies": {
-    "artplayer": "^5.1.1",
-    "axios": "^1.6.8",
-    "element-plus": "^2.6.3",
-    "sass": "^1.74.1",
-    "vue-router": "4",
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "electron-updater": "^6.1.7"
+    "artplayer": "^5.1.1",
+    "axios": "^1.6.8",
+    "electron-updater": "^6.1.7",
+    "element-plus": "^2.6.3",
+    "hls.js": "^1.5.11",
+    "sass": "^1.74.1",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",

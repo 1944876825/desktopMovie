@@ -1,26 +1,30 @@
-# electron_vite_vue_cms_desktop
+# 旧梦影视 桌面端
 
-An Electron application with Vue and TypeScript
+electron_vite_vue_cms_desktop
 
-## Recommended IDE Setup
+## 项目介绍
+- 后端：苹果cmsV10、apptoV3插件（感谢@appto大佬的开源项目）等
+- 前端：electron-vite、element-plus、vue-router等
+
+## 推荐的IDE设置
 
 - [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
 
-## Project Setup
+## 项目搭建
 
-### Install
+### 安装依赖
 
 ```bash
 $ yarn
 ```
 
-### Development
+### 预览
 
 ```bash
 $ yarn dev
 ```
 
-### Build
+### 编译打包
 
 ```bash
 # For windows
@@ -32,3 +36,8 @@ $ yarn build:mac
 # For Linux
 $ yarn build:linux
 ```
+
+## 预览
+<img src="./resources/doc/home.png" alt="首页">
+<img src="./resources/doc/class.png" alt="分类">
+<img src="./resources/doc/play.png" alt="播放页">

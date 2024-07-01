@@ -20,11 +20,13 @@ const ju_index = ref(0)
 const xl_index = ref(0)
 const isShowAll = ref(false)
 const isCollect = ref(false)
-const instance:Ref<Artplayer|null> = ref(null);
+const artPlayer:Ref<Artplayer|null> = ref(null);
 const artRef = ref(null);
 // const playRateChoose = ref(false)
 const videoInfo = ref(<VideoInfo>{})
 const videoPlayUrl = ref(null)
+import Hls from 'hls.js';
+
 
 let option = {
   theme: '#FB7299',
@@ -34,6 +36,9 @@ let option = {
   aspectRatio: true,
   fullscreen: true,
   fullscreenWeb: true,
+  customType: {
+    m3u8: playM3u8,
+  },
   controls: [
     // {
     //     name: 'playRate',
@@ -69,22 +74,22 @@ let option = {
 }
 
 const initVideoPlayer = () => {
-  instance.value = new Artplayer({
+  artPlayer.value = new Artplayer({
     url: videoPlayUrl.value ?? '',
     ...option,
     container: artRef.value!,
   }) as any;
   if (ju_index.value != 0) {
-    instance.value!.play()
+    artPlayer.value!.play()
   }
-  instance.value!.on('fullscreen', () => {
+  artPlayer.value!.on('fullscreen', () => {
     handFullWindow()
   });
 }
 
 onBeforeUnmount(() => {
-  if (instance.value) {
-    instance.value.destroy(false)
+  if (artPlayer.value) {
+    artPlayer.value.destroy(false)
   }
 });
 
@@ -112,13 +117,14 @@ const videoParse = () => {
       videoPlayUrl.value = null
     } else {
       videoPlayUrl.value = res.data.data.url
-      if (!instance.value) {
+      if (!artPlayer.value) {
         initVideoPlayer()
       } else {
-        if (instance.value) {
-          instance.value.url = videoPlayUrl.value!
+        if (artPlayer.value) {
+          artPlayer.value.url = videoPlayUrl.value!
+          setPlayType(artPlayer.value.url)
           if (ju_index.value != 0) {
-            instance.value!.play()
+            artPlayer.value!.play()
           }
         }
       }
@@ -126,6 +132,29 @@ const videoParse = () => {
   })
 }
 
+function playM3u8(video, url, art) {
+  if (Hls.isSupported()) {
+    if (art.hls) art.hls.destroy();
+    const hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    art.hls = hls;
+    art.on('destroy', () => hls.destroy());
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url;
+  } else {
+    art.notice.show = 'Unsupported playback format: m3u8';
+  }
+}
+function setPlayType(url: string) {
+  if (url.search(".m3u8") != -1) {
+    artPlayer.value!.type = "m3u8"
+  } else if (url.search(".flv") != -1) {
+    artPlayer.value!.type = "flv"
+  } else {
+    artPlayer.value!.type = "mp4"
+  }
+}
 // 获取视频详情
 const getVideoDetail = () => {
   getVideoDetailApi({id: id.value}).then( res => {
