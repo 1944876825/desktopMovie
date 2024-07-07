@@ -2,7 +2,7 @@
 import {ref, onBeforeUnmount, Ref} from 'vue';
 import { useRouter } from 'vue-router'
 import Artplayer from "artplayer";
-import { getVideoDetailApi } from '../../request/api/video'
+import { getVideoDetailApi, VideoCollect } from "../../request/api/video";
 import { VideoInfo } from '../../request/model/video/detail'
 import { videoParseApi } from '../../request/api/video'
 import {
@@ -10,8 +10,9 @@ import {
   CloseBold,
   FullScreen, BottomLeft,
 } from '@element-plus/icons-vue'
-import {HandleWindow} from "../../utils/win";
+import { HandleWindow, IsWindowsMax, OnWindowsMax } from "../../utils/win";
 // import {WindowIsFullscreen} from "../../../wailsjs/runtime";
+import artplayerPluginDanmuku from 'artplayer-plugin-danmuku';
 
 const router = useRouter()
 const id = ref(parseInt(router.currentRoute.value.params.id as string))
@@ -26,50 +27,29 @@ const artRef = ref(null);
 const videoInfo = ref(<VideoInfo>{})
 const videoPlayUrl = ref(null)
 import Hls from 'hls.js';
+import { ElMessage } from "element-plus";
 
 
 let option = {
-  theme: '#FB7299',
   setting: true,
+  theme: '#FB7299',
   flip: true,
   playbackRate: true,
   aspectRatio: true,
   fullscreen: true,
   fullscreenWeb: true,
   customType: {
-    m3u8: playM3u8,
+    m3u8: playM3u8
   },
-  controls: [
-    // {
-    //     name: 'playRate',
-    //     index: 10,
-    //     position: 'right',
-    //     html: '<span style="font-weight: bold; color: #fff">倍速<span>',
-    //     tooltip: '倍速播放（长按->）',
-    //     click: function (...args) {
-    //         let temp = document.getElementsByClassName('playRateCol')
-    //         let playRateCol = temp[0]
-    //         playRateChoose.value = !playRateChoose.value
-    //         if (playRateChoose.value == true) {
-    //             playRateCol.style = 'display: flex;';
-    //         } else {
-    //             playRateCol.style = 'display: none;';
-    //         }
-    //         // instance.value.playbackRate = 2;
-    //         // playRateChoose.value = !playRateChoose.value
-    //         // playRateChoose.value.style = 'display: none'
-    //     },
-    //     mounted: function (...args) {
-    //         let temp_list = document.getElementsByClassName('art-video-player')
-    //         const art_video_player = temp_list[0]
-    //         console.log(art_video_player)
-    //         var divv = '<div class="playRateCol"><div>2.0</div><div>1.5</div><div>1.25</div><div>1.0</div><div>0.75</div><div>0.5</div></div>'
-    //         var divx = document.createElement('div')
-    //         divx.innerHTML = divv
-
-    //         art_video_player.appendChild(divx)
-    //     },
-    // },
+  plugins: [
+    artplayerPluginDanmuku({
+      danmuku: [
+        {
+          text: '使用数组',
+          time: 1
+        },
+      ],
+    }),
   ],
 }
 
@@ -82,9 +62,9 @@ const initVideoPlayer = () => {
   if (ju_index.value != 0) {
     artPlayer.value!.play()
   }
-  artPlayer.value!.on('fullscreen', () => {
-    handFullWindow()
-  });
+  // artPlayer.value!.on('fullscreen', () => {
+  //   handFullWindow()
+  // });
 }
 
 onBeforeUnmount(() => {
@@ -100,8 +80,15 @@ const chooseJuJi = (index:number) => {
 }
 
 // 收藏
-const toCollect = () => {
-  isCollect.value = !isCollect.value
+const toCollect = async () => {
+  let res = await VideoCollect(videoInfo.value.vod_id)
+  if (res.data['code'] == 1) {
+    isCollect.value = true;
+    ElMessage({message:res.data['msg'],type: 'success'})
+  } else {
+    isCollect.value = false;
+    ElMessage({message:res.data['msg'],type: 'error'})
+  }
 }
 
 // 简介/评论 切换
@@ -159,10 +146,10 @@ function setPlayType(url: string) {
 const getVideoDetail = () => {
   getVideoDetailApi({id: id.value}).then( res => {
     videoInfo.value = res.data.data
+    isCollect.value = res.data.data['is_collection']
     videoParse()
   })
 }
-getVideoDetail()
 
 // 前往首页
 const toIndex =() => {
@@ -170,15 +157,15 @@ const toIndex =() => {
 }
 // 处理全屏
 const isFullscreen = ref(false);
-const handFullWindow = async () => {
-  // if (await WindowIsFullscreen()) {
-  //   isFullscreen.value = false;
-  //   HandleWindow('unmax')
-  // } else {
-  //   isFullscreen.value = true;
-  //   HandleWindow('max')
-  // }
+
+const init = async () => {
+  isFullscreen.value = await IsWindowsMax()
+  getVideoDetail()
 }
+OnWindowsMax(async () => {
+  isFullscreen.value = await IsWindowsMax()
+})
+init()
 </script>
 
 <template>
@@ -203,7 +190,7 @@ const handFullWindow = async () => {
                     <div class="max_min" @click="HandleWindow('min')">
                         <el-icon :size="20" style="padding: 8px;"><SemiSelect /></el-icon>
                     </div>
-                    <div class="max_min" @click="handFullWindow">
+                    <div class="max_min" @click="HandleWindow('max')">
                         <el-icon :size="20" style="padding: 8px;">
                           <FullScreen v-if="!isFullscreen" />
                           <BottomLeft v-else />
@@ -219,9 +206,7 @@ const handFullWindow = async () => {
         <el-row style="height: calc(100% - 80px);">
             <!-- 视频播放器 -->
             <div style="width: 70%;height: 100%;background-color: #000;">
-                <el-row style="width: 100%; height: 100%;" align="middle">
-                    <div ref="artRef" class="artplayer-app" style="width: 100%;height: 100%;"></div>
-                </el-row>
+              <div ref="artRef" class="artplayer-app" style="width: 100%;height: 100%;"></div>
             </div>
             <!-- 视频详情 -->
             <div style="width: 30%;height: 100%;background-color: rgb(25, 25, 28);">

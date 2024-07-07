@@ -79,12 +79,21 @@ function handleWindow(mainWindow: BrowserWindow) {
   ipcMain.on('handleWindow', (_, type) => {
     if (type === 'min') {
       mainWindow.minimize()
-    } else if (type === 'max') {
+    } else if (type == 'max') {
       mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()
     } else if (type == 'close') {
       mainWindow.destroy()
     }
   })
+
+  ipcMain.handle('is-window-maximized', () => {
+    return mainWindow.isMaximized()
+  })
+
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('window-maximized')
+  })
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('window-maximized')
+  })
 }
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.

@@ -58,3 +58,19 @@ export const videoClassApi = (params: {}) => {
     params
   })
 }
+
+
+export const VideoCollect = (vid) => {
+  const params = {
+    ac: 'set',
+    mid: 1,
+    id: vid,
+    sid: 1,
+    nid: 1
+  }
+  return request({
+    url: cmsApi + '/user/collection',
+    method: 'post',
+    params
+  })
+}

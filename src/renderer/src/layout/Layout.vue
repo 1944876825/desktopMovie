@@ -12,8 +12,8 @@ import {
   BottomLeft
 } from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router'
-import { HandleWindow } from '../utils/win'
-// import {WindowIsFullscreen, WindowUnfullscreen} from "../../wailsjs/runtime";
+import { HandleWindow, IsWindowsMax, OnWindowsMax } from '../utils/win'
+
 const route = useRoute()
 const activeName = ref(0)
 const cateList = ref<{ id: number; title: string }[]>([])
@@ -73,17 +73,14 @@ const initCate = () => {
     cateList.value = []
   }
 }
-initCate()
-
-const handFullWindow = async () => {
-  // if (await WindowIsFullscreen()) {
-  //   isFullscreen.value = false;
-  //   HandleWindow('unmax')
-  // } else {
-  //   isFullscreen.value = true;
-  //   HandleWindow('max')
-  // }
+const init = async () => {
+  isFullscreen.value = await IsWindowsMax()
+  initCate()
 }
+OnWindowsMax(async () => {
+  isFullscreen.value = await IsWindowsMax()
+})
+init()
 </script>
 
 <template>
@@ -156,6 +153,7 @@ const handFullWindow = async () => {
                 <el-tabs v-model="activeName" @tab-click="handleClick">
                   <el-tab-pane
                     v-for="cate in cateList"
+                    :key="cate.id"
                     :label="cate.title"
                     :name="cate.id"
                   ></el-tab-pane>
@@ -180,7 +178,7 @@ const handFullWindow = async () => {
                     <SemiSelect />
                   </el-icon>
                 </div>
-                <div class="max_min" @click="handFullWindow()">
+                <div class="max_min" @click="HandleWindow('max')">
                   <el-icon :size="20" style="padding: 8px">
                     <FullScreen v-if="!isFullscreen" />
                     <BottomLeft v-else />
